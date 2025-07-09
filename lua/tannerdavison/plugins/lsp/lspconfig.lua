@@ -196,25 +196,33 @@ return {
 				},
 			},
 		}
-
 		-- Configure Clangd server
 		vim.lsp.config.clangd = {
-			cmd = {
-				"clangd",
-				"--background-index",
-				"--completion-style=detailed",
-				"--header-insertion=iwyu",
-				"--fallback-style=llvm",
-				"--enable-config",
-				"--query-driver=**",
-				"--clang-tidy",
-				"--offset-encoding=utf-16",
-				"--compile-commands-dir=.",
-				"--header-insertion-decorators",
-				"--all-scopes-completion",
-				"--pch-storage=memory",
-				"-j=4",
-			},
+			cmd = (function()
+				local system_name = vim.loop.os_uname().sysname
+				local cmd = {
+					"clangd",
+					"--background-index",
+					"--completion-style=detailed",
+					"--header-insertion=iwyu",
+					"--fallback-style=llvm",
+					"--enable-config",
+					"--clang-tidy",
+					"--compile-commands-dir=.",
+					"--header-insertion-decorators",
+					"--all-scopes-completion",
+					"--pch-storage=memory",
+					"-j=4",
+				}
+
+				-- Only add these flags if NOT on macOS
+				if system_name ~= "Darwin" then
+					table.insert(cmd, "--query-driver=**")
+					table.insert(cmd, "--offset-encoding=utf-16")
+				end
+
+				return cmd
+			end)(),
 			filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto", "h", "hpp" },
 			init_options = {
 				clangdFileStatus = true,
