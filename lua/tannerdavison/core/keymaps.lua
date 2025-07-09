@@ -437,6 +437,7 @@ keymap.set("n", "<leader>rsc", function()
 		"",
 		"export default " .. component_name .. ";",
 		"",
+		"const CopyWrapper = styled.div``;",
 		"const Wrapper = styled.div`",
 		"  display: flex;",
 		"  flex-direction: column;",
@@ -544,3 +545,19 @@ keymap.set("n", "<leader>rsc", function()
 	-- Select the component name for easy replacement
 	vim.cmd("normal! v" .. string.len(component_name) .. "l")
 end, { desc = "Insert React Storyblok Component boilerplate" })
+-- ================================================================
+-- COMPLETION TOGGLE
+-- ================================================================
+
+-- Toggle autocomplete on/off
+keymap.set({ "n", "i" }, "<leader>tc", function()
+	local cmp = require("cmp")
+	local current_setting = cmp.get_config().enabled
+	if current_setting ~= false then
+		cmp.setup({ enabled = false })
+		print("✗ Autocomplete disabled")
+	else
+		cmp.setup({ enabled = true })
+		print("✓ Autocomplete enabled")
+	end
+end, { desc = "Toggle autocomplete" })
